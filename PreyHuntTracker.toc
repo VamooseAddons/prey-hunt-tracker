@@ -1,0 +1,15 @@
+## Interface: 120005
+## Title: Prey Hunt Tracker
+## Notes: Prey Hunt widget tracker + Astalor target picker + achievement progress
+## Author: Vamoose
+## Version: 1.0.1
+## AddonCompartmentFunc: PreyHuntTracker_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: PreyHuntTracker_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: PreyHuntTracker_OnAddonCompartmentLeave
+## IconTexture: Interface\Icons\Ability_Hunter_SteadyShot
+## SavedVariables: PHT_DB
+
+PreyHuntTracker.lua
+PHT_Achievements.lua
+PHT_GossipOverlay.lua
+PHT_Panel.lua

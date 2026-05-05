@@ -1,0 +1,95 @@
+## v1.0.1 (2026-05-05)
+
+### Fixed
+- Secret-string taint: PLAYER_TARGET_CHANGED firing from a tainted
+  secure-action chain (e.g. TargetNearestEnemy hotkey) caused a Lua
+  error spam ("attempt to perform string conversion on a secret string
+  value (execution tainted by 'PreyHuntTracker')"). string.split call
+  in GetUnitNpcID now pcall-guarded; on the next clean target change
+  the NPC ID resolves correctly.
+
+## v1.0.0 (2026-05-05) - First public release
+
+The first version of Prey Hunt Tracker on CurseForge. This release covers
+the full Midnight Prey workflow: deciding which target to hunt, tracking
+progress on the achievements that matter, and seeing your live hunt state
+without alt-tabbing through the achievement frame.
+
+### Astalor's gossip menu, annotated
+
+When you talk to Astalor Bloodsworn (Silvermoon), every prey-target option
+in the "Prey: Preferential Killing" menu now carries a priority icon:
+
+- Gold star: hunting this prey will FINISH an achievement
+- Yellow dot: hunting this prey progresses an unfinished achievement
+- Green check: every achievement that uses this prey is already earned
+- No icon: not part of any indexed Prey-category achievement
+
+Hover any decorated row for a tooltip that splits feeding achievements
+into "Will progress" vs "Already credited" so you can see exactly which
+kills still matter.
+
+The follow-up "How viciously?" difficulty selector is also classified --
+icon and tooltip reflect whether the chosen target on Normal/Hard/Nightmare
+would finish or progress any "Prey: ..." achievement. Random Hunt mode
+classifies each difficulty by overall progress at that tier.
+
+After a Random Hunt rolls, a chat line announces the assigned target with
+the same classification so you can see at a glance whether the rolled
+prey is worth chasing this week.
+
+Works with both the default Blizzard gossip frame and DialogueUI.
+
+### Prey Hunt Tracker panel
+
+The /pht panel is now tabbed:
+
+**Status tab** -- live dashboard:
+- Hunt state (gated on Blizzard's `shownState` so it shows
+  "Awaiting hunt start" instead of stale Warm)
+- Hunts available + distance to objective
+- Preyseeker renown level, percent to next, and Anguish currency
+- Achievements summary: earned/total, points, targets left, finishers
+  (NPCs that would complete an achievement on the next kill)
+- Active prey quest with per-objective progress
+- Torment difficulty + stack + remaining duration
+
+**Targets tab** -- two views over every Prey-category achievement:
+- *By Achievement* (default): each achievement collapsible, OR-style
+  achievements badged, decor reward shown when applicable, per-criterion
+  pills with per-NPC completion. Objective-style achievements like
+  "Kitchen Nightmare" or "Look I'm Just Trying To Fish Here" show their
+  current count (e.g. 0 / 100) inline.
+- *By Target*: every named NPC, sorted by how many open Prey: achievements
+  still need them. Hover any row for the list of feeding achievements.
+
+### Carry-over from earlier internal builds
+
+- Auto-detected dot-strip overlay beneath Blizzard's prey progress widget
+- Torment debuff state (Hard / Nightmare) with stack count and timer
+- Active prey quest objectives + navigation distance
+- Addon compartment toggle
+
+### Slash commands
+
+- `/pht` -- toggle the panel
+- `/pht scan` -- force a rescan of the prey hunt widget
+- `/pht overlay` -- toggle the dot-strip overlay on/off
+- `/pht state` -- dump the live widget data table (debug aid)
+
+### Under the hood
+
+- Three sibling modules: PHT_Achievements.lua, PHT_GossipOverlay.lua,
+  PHT_Panel.lua, each with one clear responsibility.
+- Achievement index built lazily on first need (panel open, target Astalor,
+  open Astalor's gossip). No PLAYER_LOGIN cost.
+- Refreshes on ACHIEVEMENT_EARNED / CRITERIA_UPDATE / CRITERIA_COMPLETE
+  with O(1) byCriteriaID lookup.
+- Targets tab uses WowScrollBoxList; legacy UIPanelScrollFrameTemplate
+  removed.
+- SavedVariables: PHT_DB.preyCategoryID caches the resolved category ID
+  across sessions.
+
+### Requirements
+
+- World of Warcraft: Midnight (TOC 120005)
